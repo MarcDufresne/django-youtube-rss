@@ -1,0 +1,7 @@
+secret_key
+yt_api_key
+
+*.pyc
+db.sqlite3
+.idea
+__pycache__
