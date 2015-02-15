@@ -35,6 +35,33 @@ def get_or_create_channel_from_name(channel_name):
     return result_channel
 
 
+def get_or_create_channel_from_id(channel_id):
+
+    channel = None
+    result_channel = None
+
+    try:
+        channel = YouTubeChannel.objects.get(id=channel_id)
+    except YouTubeChannel.DoesNotExist:
+        pass
+
+    if not channel:
+        youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=YOUTUBE_API_KEY)
+
+        result = youtube.channels().list(id=channel_id, part='snippet').execute()
+
+        items = result.get('items', [])
+        channel_name = items[0].get('snippet', {}).get('title')
+        if channel_name:
+            result_channel = YouTubeChannel(id=channel_id, name=channel_name)
+            result_channel.save()
+
+    else:
+        result_channel = channel
+
+    return result_channel
+
+
 def create_videos_for_channel(channel):
 
     if not isinstance(channel, YouTubeChannel):

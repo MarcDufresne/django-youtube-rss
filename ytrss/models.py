@@ -9,7 +9,7 @@ class YouTubeChannel(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def get_absolute_url(self):
-        return YOUTUBE_CHANNEL_URL_FORMAT.format(self.name)
+        return YOUTUBE_CHANNEL_URL_FORMAT.format(self.id)
 
 
 class YouTubeVideo(models.Model):
