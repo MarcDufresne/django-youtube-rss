@@ -10,8 +10,11 @@ from ytrss.models import YouTubeVideo, YouTubeChannel
 
 class YouTubeRSSFeed(Feed):
 
+    filter = None
+
     def get_object(self, request, **kwargs):
         channel_name = kwargs.get('channel_name')
+        self.filter = kwargs.get('filter')
         if channel_name:
             get_or_create_channel_from_name(channel_name)
             return get_object_or_404(YouTubeChannel, name=channel_name)
@@ -20,7 +23,10 @@ class YouTubeRSSFeed(Feed):
 
     def items(self, channel):
         create_videos_for_channel(channel)
-        return YouTubeVideo.objects.filter(channel=channel).order_by('-pub_date')[:10]
+        videos = YouTubeVideo.objects.filter(channel=channel).order_by('-pub_date')
+        if self.filter:
+            videos = videos.filter(title__icontains=self.filter)
+        return videos[:25]
 
     def item_title(self, video):
         return video.title

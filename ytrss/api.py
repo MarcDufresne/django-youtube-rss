@@ -43,7 +43,7 @@ def create_videos_for_channel(channel):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=YOUTUBE_API_KEY)
 
     result = youtube.search().list(
-        order='date', part='snippet', channelId=channel.id, type='video').execute()
+        order='date', part='snippet', channelId=channel.id, type='video', maxResults=25).execute()
 
     for item in result.get('items', []):
         video_id = item.get('id', {}).get('videoId')
